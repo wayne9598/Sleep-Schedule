@@ -2,10 +2,12 @@ from django.db import models
 from PSQI.models import PSQI
 from django.utils import timezone
 from datetime import date, timedelta
-
-
+import math
+import os
 
 from django.db.models.signals import post_save
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sleep_schedule.settings')
 
 
 # Create your models here.
@@ -20,14 +22,11 @@ class Sleep_schedule(models.Model):
         return '%s "sleep schedule"' % (self.date)
 
 
-
 date = date.today() + timedelta(days=7)
 start_time = timezone.now()
 end_time = timezone.now()
 nap_start = timezone.now()
 nap_end = timezone.now()
-
-## todo:
 
 
 # Once submit PSQI, automatically create +7 day schedule with default value
@@ -50,9 +49,6 @@ updated_nap_start = timezone.now()
 updated_nap_end = timezone.now()
 
 
-
-
-
 # Once submit PSQI, automatically update today's schedule based on PSQI and sensor data
 def update_schedule(sender, **kwargs):
     if kwargs['created']:
@@ -68,7 +64,6 @@ def update_schedule(sender, **kwargs):
             nap_start = updated_nap_start,
             nap_end = updated_nap_end,
         )
-        
 
 
 post_save.connect(create_schedule, sender = PSQI)

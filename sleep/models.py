@@ -22,13 +22,9 @@ class Sleep(models.Model):
     deep_sleep = models.DecimalField(max_digits=3, decimal_places=2)
     average_resting_heart_rate = models.IntegerField()
 
-
     def __str__(self):
         return '%s "sleep"' % (self.date)
 
-   
-    
-    
 
 class Sleep_helper(models.Model):
 
