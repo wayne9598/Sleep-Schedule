@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block headline%}
+    Schedule
+{%endblock%}
+
+{% block head%}
+
+  <script type='text/javascript' src = 'https://www.gstatic.com/charts/loader.js'></script>
+  <script type='text/javascript'>
+  
+    
+
+  </script>
+  
+
+{% endblock%}
+
+{% block content%}
+
+
+  <p1>{{ schedule_date }}</p1>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">End Time</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr>
+        <th scope="row">Sleep</th>
+        <td style='background-color: {{backgoundcolor}} '>{{ start_time }}</td>
+        <td>{{ end_time }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Nap</th>
+        <td>{{ nap_start }}</td>
+        <td>{{ nap_end }}</td>
+      </tr>
+      
+    </tbody>
+  </table> 
+
+  
+
+{%endblock%}

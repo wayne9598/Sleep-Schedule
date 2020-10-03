@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{%block headline%}
+    PSQI
+{%endblock%}
+
+{%block content%}
+
+    <form method='POST'> {% csrf_token %}
+        {{form | crispy}}
+        <input type='submit' value='Save' />
+    </form>
+
+
+{%endblock%}
