@@ -49,6 +49,8 @@ updated_nap_end = timezone.now()
 
 
 
+
+
 # Once submit PSQI, automatically update today's schedule based on PSQI and sensor data
 def update_schedule(sender, **kwargs):
     if kwargs['created']:
@@ -64,3 +66,5 @@ def update_schedule(sender, **kwargs):
 
 post_save.connect(create_schedule, sender = PSQI)
 post_save.connect(update_schedule, sender = PSQI)
+
+
