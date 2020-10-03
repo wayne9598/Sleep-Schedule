@@ -49,18 +49,37 @@ updated_nap_end = timezone.now()
 
 
 
-# Once submit PSQI, automatically update today's schedule based on PSQI and sensor data
-def update_schedule(sender, **kwargs):
-    if kwargs['created']:
 
-        today_schedule = Sleep_schedule.objects.filter(date=date.today())[0].update(
-            start_time = updated_start_time,
-            end_time = updated_end_time,
-            nap_start = updated_nap_start,
-            nap_end = updated_nap_end,
-        )
+# Once submit PSQI, automatically update today's schedule based on PSQI and sensor data
+# def update_schedule(sender, **kwargs):
+#     if kwargs['created']:
+
+        # Data for PSQI from sensors: latency, sleepDuration, sleepEfficiency
+        # latency = 2
+        # sleepDuration = 420
+        # sleepEfficiency = 85
+
+
+        # yesterday = date.today() - timedelta(days=1)
+        # yesterday_PSQI = PSQI.objects.filter(date=yesterday)
+
+        # PSQI_score = PSQI_score(yesterday_PSQI, latency, sleepDuration, sleepEfficiency)
+        
+        # yesterday_PSQI.update(
+        #     score= PSQI_score
+        # )
+
+        # today_schedule = Sleep_schedule.objects.filter(date=date.today())[0].update(
+        #     start_time = updated_start_time,
+        #     end_time = updated_end_time,
+        #     nap_start = updated_nap_start,
+        #     nap_end = updated_nap_end,
+        # )
         
 
 
+
 post_save.connect(create_schedule, sender = PSQI)
-post_save.connect(update_schedule, sender = PSQI)
+# post_save.connect(update_schedule, sender = PSQI)
+
+
