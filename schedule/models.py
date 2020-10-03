@@ -57,6 +57,11 @@ updated_nap_end = timezone.now()
 def update_schedule(sender, **kwargs):
     if kwargs['created']:
 
+        
+
+
+
+
         today_schedule = Sleep_schedule.objects.filter(date=date.today())[0].update(
             start_time = updated_start_time,
             end_time = updated_end_time,
