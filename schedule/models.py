@@ -7,6 +7,7 @@ from django.urls import reverse
 from sleep.models import Sleep
 from .calculations import recommendation, Action
 from astronauts.models import Astronaut 
+from exercises.models import Exercise
 
 
 import math
@@ -21,6 +22,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sleep_schedule.settings')
 class Sleep_schedule(models.Model):
 
     astronaut = models.ForeignKey(Astronaut, on_delete=models.CASCADE, null=True, blank=True, default = 1)
+    exercise = models.OneToOneField(Exercise, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField()
 
     
@@ -36,6 +38,8 @@ class Sleep_schedule(models.Model):
     nap_start = models.TimeField(blank=True, null=True, default=datetime.time(14, 00))
     nap_end = models.TimeField(blank=True, null=True, default=datetime.time(15, 00))
 
+    do_resistant = models.BooleanField(default=True,blank=True, null=True)
+    do_aerobics = models.BooleanField(default=True,blank=True, null=True)
     resistant_excercise_start = models.TimeField(blank=True, null=True, default=datetime.time(15, 00))
     resistant_excercise_end = models.TimeField(blank=True, null=True, default=datetime.time(15, 30))
     aerobics_exercise_start = models.TimeField(blank=True, null=True, default=datetime.time(15, 30))
@@ -129,11 +133,45 @@ class Sleep_schedule(models.Model):
 
         return nap_duration+sleep_duration
 
+    def update_excercise_in_schedule(self, do_exercise, aredTime, aerobicTime, load, instance):
+        
+        print('!!!!!!!!!!')
+        print(aredTime)
+        print(aerobicTime)
+        print('!!!!!!!!!!')
+
+
+        self.exercise = instance
+        if do_exercise == False: 
+            self.do_resistant = False
+            self.do_aerobics = False
+        else:
+            if aredTime == 0:
+                self.do_resistant = False
+                
+            if aerobicTime == 0:
+                self.do_aerobics = False
+
+            if aredTime != None:
+                delta = datetime.timedelta(hours = aredTime)
+                new_reisitant_end_time = (datetime.datetime.combine(datetime.date(1,1,1),self.resistant_excercise_end) + delta).time()            
+                self.resistant_excercise_end = new_reisitant_end_time
+
+            if aerobicTime != None:
+
+                self.aerobics_exercise_start = new_reisitant_end_time
+                delta2 = datetime.timedelta(hours = aerobicTime)
+                new_aerobic_end_time = (datetime.datetime.combine(datetime.date(1,1,1),new_reisitant_end_time) + delta2).time()            
+                self.aerobics_exercise_end = new_aerobic_end_time
+        
+        self.save()
+            
+        
+
 
 def get_time_in_hr(start, end):
 
     start = str(start)
-    print('start', start)
     end = str(end)
     time1 = datetime.datetime.strptime(start,'%H:%M:%S')
     time2 = datetime.datetime.strptime(end,'%H:%M:%S')
@@ -142,13 +180,6 @@ def get_time_in_hr(start, end):
     second = difference.seconds
     hours = second/3600
     return hours
-
-
-
-
-
-    
-
 
 
 tomorrow_date = date.today() + timedelta(days=1)
@@ -166,8 +197,10 @@ def create_schedule(sender, **kwargs):
 
 
 # Once submit PSQI, automatically update today's schedule based on PSQI and sensor data
+# Changed - Once PSQI created --> Excercise update --> schedue update!!!
 def update_schedule(sender, instance, **kwargs):
-    if kwargs['created']:
+    if not kwargs['created']:
+        PSQI = instance.PSQI
 
         # Previous date to get sleep data
         previous_date = date.today() - timedelta(days=1)
@@ -178,7 +211,7 @@ def update_schedule(sender, instance, **kwargs):
 
         # Get scores
         sleep_sensed_score = sleep.get_sleep_score()
-        PSQI_score = instance.get_score(sleep.latency, sleep.duration, sleep.efficiency)
+        PSQI_score = PSQI.get_score(sleep.latency, sleep.duration, sleep.efficiency)
 
         # Update scores to schedule
         today_schedule.update_sensed_score(sleep_sensed_score)
@@ -204,12 +237,13 @@ def update_schedule(sender, instance, **kwargs):
                 today_schedule.add_nap()
             
             elif i == Action.Melatonin:
-                today_schedule.add_melatonin() 
+                today_schedule.add_melatonin()
 
-        
+        today_schedule.update_excercise_in_schedule(instance.do_exercise, instance.aredTime, instance.aerobicTime, instance.load, instance)
 
 
-post_save.connect(create_schedule, sender = PSQI)
-post_save.connect(update_schedule, sender = PSQI)
+
+# post_save.connect(create_schedule, sender = PSQI)
+post_save.connect(update_schedule, sender = Exercise)
 
 

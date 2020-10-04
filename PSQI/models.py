@@ -33,6 +33,20 @@ class PSQI(models.Model):
         ("3", "bigProblem"), 
        
     )
+    INTENSITY= ( 
+        ("1", "1"), 
+        ("2", "2"), 
+        ("3", "3"), 
+        ("4", "4"), 
+        ("5", "5"), 
+        ("6", "6"), 
+        ("7", "7"), 
+        ("8", "8"), 
+        ("9", "9"), 
+        ("10", "10"), 
+      
+       
+    )
 
     date = models.DateField(default = date.today() - timedelta(days=1))
 
@@ -50,6 +64,8 @@ class PSQI(models.Model):
     stayAwakeDuringWork = models.CharField(max_length = 20, choices = Q567_CHOICES, default = '1')  #7
     enthusiasmToDoThings = models.CharField(max_length = 20, choices = Q8_CHOICES, default = '1')  #8
     selfRatedSleepQuality = models.CharField(max_length = 20, choices = Q9_CHOICES, default = '1')  #9
+
+    userFeedBackIntensity = models.CharField(max_length = 20, choices = INTENSITY, default = '1', null = True, blank=True)
 
 
     def __str__(self):

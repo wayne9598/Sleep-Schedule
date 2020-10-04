@@ -142,13 +142,18 @@ def dynamic_schedule_lookup_view(request, id):
     sleep_score = sleep_schedule.sensed_score
     yesterday_PSQI_score = sleep_schedule.PSQI_score
 
+    # Exercise or not
+    do_resistant = sleep_schedule.do_resistant
+    do_aerobics = sleep_schedule.do_aerobics
 
-    sleep_duration = sleep_schedule.get_sleep_duration
 
 
     # games = Game.objects.filter(end_time__gte = current_time).order_by('start_time') #list of object
     
     context = {
+
+        'schedule':sleep_schedule,
+
         'schedule_date': schedule_date,
         'today_year':today_year,
         'today_month':today_month, 
@@ -197,12 +202,16 @@ def dynamic_schedule_lookup_view(request, id):
         'take_melatonin':take_melatonin,
         'take_caffeine':take_caffeine,
 
+        'do_resistant':do_resistant,
+        'do_aerobics':do_aerobics,
+
 
        
         'yesterday_PSQI_score': yesterday_PSQI_score,
         'sleep_score': sleep_score,
 
-        'sleep_duration':sleep_duration,
+        'exercise':sleep_schedule.exercise,
+
         
 
 

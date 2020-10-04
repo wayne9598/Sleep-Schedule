@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'sleep',
-    'excercises',
+    'exercises',
     'nutritions',
     'pages',
     'schedule',

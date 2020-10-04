@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block headline%}
-    Schedule
+    {{ schedule_date }}
 {%endblock%}
 
 {% block head%}
@@ -57,6 +57,9 @@
       var deh = {{d_end_hour}}
       var dem = {{d_end_min}}
 
+      var do_aerobics = '{{do_aerobics}}'
+      var do_resistant = '{{do_resistant}}'
+
       var aesh = {{aerobics_exercise_start_hour}}
       var aesm = {{aerobics_exercise_start_min}}
       var aeeh = {{aerobics_exercise_end_hour}}
@@ -86,21 +89,33 @@
       var caffeine_e_h = 12
       var caffeine_e_m = 0
 
+
+
       dataTable.addRows([
       [ 'Nutrition', 'BreakFast',           new Date(year,month,date,bsh,bsm,0), new Date(year,month,date,beh,bem,0) ],
       [ 'Sleep',  'Night',                  new Date(year,month,date,ssh,ssm,0), new Date(year2,month2,date2,seh,sem,0) ],
-      [ 'Exercise',  'Aerobics',            new Date(year,month,date,aesh,aesm,0), new Date(year,month,date,aeeh,aeem,0) ],
-      [ 'Exercise', 'Resistant Training',   new Date(year,month,date,resh,resm,0), new Date(year,month,date,reeh,reem,0) ],
       [ 'Nutrition', 'Lunch',               new Date(year,month,date,lsh,lsm,0), new Date(year,month,date,leh,lem,0) ],
       [ 'Nutrition',   'Dinner',            new Date(year,month,date,dsh,dsm,0), new Date(year,month,date,deh,dem,0) ],
       ]);
 
+      if(do_resistant == 'True'){
+        dataTable.addRows([
+          [ 'Exercise', 'Resistant Training',   new Date(year,month,date,resh,resm,0), new Date(year,month,date,reeh,reem,0) ],
+        ]);
+      }
+
+      if(do_aerobics == 'True'){
+        dataTable.addRows([
+          [ 'Exercise',  'Aerobics',            new Date(year,month,date,aesh,aesm,0), new Date(year,month,date,aeeh,aeem,0) ],
+        ]);
+      }
 
       if(take_nap == 'True'){
         dataTable.addRows([
         [ 'Sleep',  'Nap',                    new Date(year,month,date,nsh,nsm,0), new Date(year,month,date,neh,nem,0)],
         ]);
       } 
+
       if(take_meditation == 'True'){
         dataTable.addRows([
           [ 'Sleep Helper',   'meditation',               new Date(year,month,date,meditation_s_h,meditation_s_m,0), new Date(year,month,date,meditation_e_h,meditation_e_m,0) ],
@@ -119,12 +134,6 @@
 
 
 
-      
-
-      
-
-      
-
       chart.draw(dataTable);
     }
   </script>
@@ -136,45 +145,127 @@
 
 
 
-  <p1> Date: {{ schedule_date }}</p1>
+  
+  <h3> PSQI Score: {{yesterday_PSQI_score}}</h3>
   <br>
-  <p1> PSQI Score: {{yesterday_PSQI_score}}</p1>
-  <br>
-  <p1> Sleep Score: {{sleep_score}}</p1>
+  <h3> Sleep Score: {{sleep_score}}</h3>
 
 
   <br><br>
 
-  <h1>sleep duration:{{sleep_duration}}<h1>
   
 
-  <div id="example2.1" style="height: 200px;"></div>
+  <div id="example2.1" style="height: 250px; " ></div>
 
-  <br><br>
+
+
+  <h1> Nutrition Guidance </h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Amount/g</th>
+      </tr>
+    </thead>
+    
+
+    <tbody>
+      <tr>
+        <th scope="row">Protein</th>
+        <td>{{ schedule.nutrition.m_protein }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Saturated Fat</th>
+        <td>{{ schedule.nutrition.m_fat_saturated | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Unsaturated Fat</th>
+        <td>{{ schedule.nutrition.m_fat_unsaturated | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Carbohydrates</th>
+        <td>{{ schedule.nutrition.m_carb | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Sugar</th>
+        <td>{{ schedule.nutrition.m_sugar | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Table Salt</th>
+        <td>{{ schedule.nutrition.m_NaCl | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Potassium</th>
+        <td>{{schedule.nutrition.m_potassium| floatformat }}</td>
+      </tr>
+
+      
+    </tbody>
+  </table> 
+
+
+
+  <h1> Exercise Guidance </h1>
+
+  {% if do_resistant == 'False' and do_aerobics == 'False' %}
 
   <table class="table">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Start Time</th>
-        <th scope="col">End Time</th>
+        <th scope="col">Category</th>
+      </tr>
+    </thead>
+    
+
+    <tbody>
+      <tr>
+        <th scope="row">Rest Day</th>
+      </tr>
+     
+    </tbody>
+  </table>
+
+  {% else %}
+  
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Exercise</th>
+        <th scope="col">Time/hr</th>
+        <th scope="col">Load/kg</th>
       </tr>
     </thead>
     
     <tbody>
+
+      {% if  do_resistant %}
+
       <tr>
-        <th scope="row">Sleep</th>
-        <td style='background-color: {{backgoundcolor}} '>{{ start_time }}</td>
-        <td>{{ end_time }}</td>
+        <th scope="row"> Resistant Training </th>
+        <td>{{ exercise.ared_name }}</td>
+        <td>{{ exercise.aredTime }}</td>
+        <td>{{ exercise.load }}</td>
       </tr>
+
+      {% endif%}
+
+      {% if do_aerobics %}
+
       <tr>
-        <th scope="row">Nap</th>
-        <td>{{ nap_start }}</td>
-        <td>{{ nap_end }}</td>
+        <th scope="row"> Aerobics </th>
+        <td>{{ exercise.aero_name }}</td>
+        <td>{{ exercise.aeroTime }}</td>
+        <td>{{ exercise.load }}</td>
       </tr>
-      
+
+      {% endif%}
+     
     </tbody>
   </table> 
+
+  {%endif%}
 
   
 

@@ -19,6 +19,7 @@ class PSQI_form(forms.ModelForm):
             'stayAwakeDuringWork', 
             'enthusiasmToDoThings', 
             'selfRatedSleepQuality', 
+            'userFeedBackIntensity',
             
         ]
 
