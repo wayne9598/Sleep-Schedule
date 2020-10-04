@@ -12,8 +12,9 @@ Open the website:
 1. Download/clone the code
 2. Install Pythton
 3. Install django through 'pip install django'
-4. Create virtual environment through '
-5. Activate virtual env through 'source bin/activate'
-6. Runserver through 'python manage.py runserver'
-7. Go to local link provided by terminal
-8. Enjoy!
+4. Install requirements.txt through 'pip install -r requirements.txt'
+5. Create virtual environment through '
+6. Activate virtual env through 'source bin/activate'
+7. Runserver through 'python manage.py runserver'
+8. Go to local link provided by terminal
+9. Enjoy!
