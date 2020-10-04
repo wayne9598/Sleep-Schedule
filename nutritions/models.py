@@ -1,6 +1,9 @@
 from django.db import models
 from django.db.models.signals import post_save
 from schedule.models import Sleep_schedule
+from exercises.models import Exercise
+from sleep.models import Sleep
+from datetime import date, timedelta
 
 
 # Create your models here.
@@ -46,6 +49,16 @@ def create_nutrition(sender, instance, **kwargs):
             m_sugar = m_sugar,
             m_NaCl = m_NaCl,
             m_potassium = m_potassium,
+        )
+
+        exercise = Exercise.objects.create(
+            date = instance.date
+        )
+
+        previous_date = instance.date  - timedelta(days=1)
+
+        sleep = Sleep.objects.create(
+            date = previous_date
         )
     
     else:

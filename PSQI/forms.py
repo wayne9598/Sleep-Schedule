@@ -20,6 +20,7 @@ class PSQI_form(forms.ModelForm):
             'enthusiasmToDoThings', 
             'selfRatedSleepQuality', 
             'userFeedBackIntensity',
+            'day',
             
         ]
 

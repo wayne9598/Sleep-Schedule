@@ -89,6 +89,17 @@
       var caffeine_e_h = 12
       var caffeine_e_m = 0
 
+      var wlsh = ssh-1
+      var wlsm = ssm
+      var wleh = ssh
+      var wlem = ssm
+      
+      var blsh = seh+1
+      var blsm = sem
+      var bleh = wlsh-5
+      var blem = wlem
+
+
 
 
       dataTable.addRows([
@@ -96,6 +107,8 @@
       [ 'Sleep',  'Night',                  new Date(year,month,date,ssh,ssm,0), new Date(year2,month2,date2,seh,sem,0) ],
       [ 'Nutrition', 'Lunch',               new Date(year,month,date,lsh,lsm,0), new Date(year,month,date,leh,lem,0) ],
       [ 'Nutrition',   'Dinner',            new Date(year,month,date,dsh,dsm,0), new Date(year,month,date,deh,dem,0) ],
+
+
       ]);
 
       if(do_resistant == 'True'){
@@ -132,6 +145,13 @@
         ]);
       } 
 
+      dataTable.addRows([
+      
+      [ 'Sleep Helper',   'Warm Light',     new Date(year,month,date,wlsh,wlsm,0), new Date(year,month,date,wleh,wlem,0) ],
+      [ 'Sleep Helper',   'White Light',     new Date(year,month,date,blsh,blsm,0), new Date(year,month,date,bleh,blem,0) ],
+
+      ]);
+
 
 
       chart.draw(dataTable);
@@ -146,13 +166,7 @@
 
 
   
-  <h3> PSQI Score: {{yesterday_PSQI_score}}</h3>
-  <br>
-  <h3> Sleep Score: {{sleep_score}}</h3>
-
-
-  <br><br>
-
+  
   
 
   <div id="example2.1" style="height: 250px; " ></div>
@@ -207,7 +221,7 @@
 
   <h1> Exercise Guidance </h1>
 
-  {% if do_resistant == 'False' and do_aerobics == 'False' %}
+  {% if do_resistant == False and do_aerobics == False %}
 
   <table class="table">
     <thead>
@@ -234,7 +248,7 @@
         <th scope="col">Category</th>
         <th scope="col">Exercise</th>
         <th scope="col">Time/hr</th>
-        <th scope="col">Load/kg</th>
+        <th scope="col">Load factor of max capacity</th>
       </tr>
     </thead>
     
@@ -246,7 +260,7 @@
         <th scope="row"> Resistant Training </th>
         <td>{{ exercise.ared_name }}</td>
         <td>{{ exercise.aredTime }}</td>
-        <td>{{ exercise.load }}</td>
+        <td>{{ exercise.load |floatformat }}</td>
       </tr>
 
       {% endif%}
@@ -256,8 +270,8 @@
       <tr>
         <th scope="row"> Aerobics </th>
         <td>{{ exercise.aero_name }}</td>
-        <td>{{ exercise.aeroTime }}</td>
-        <td>{{ exercise.load }}</td>
+        <td>{{ exercise.aerobicTime }}</td>
+        <td>{{ exercise.load|floatformat }}</td>
       </tr>
 
       {% endif%}
@@ -266,6 +280,17 @@
   </table> 
 
   {%endif%}
+  <br>
+
+  <h1 style='border-bottom: 1px solid lightgray;'> Sleep Quality Indicater </h1>
+
+
+  <p> PSQI Score: {{yesterday_PSQI_score}} / 21 </p>
+  <p> Sleep Score: {{sleep_score}}</p>
+
+
+  <br><br>
+
 
   
 

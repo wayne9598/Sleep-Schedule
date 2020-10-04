@@ -67,6 +67,9 @@ class PSQI(models.Model):
 
     userFeedBackIntensity = models.CharField(max_length = 20, choices = INTENSITY, default = '1', null = True, blank=True)
 
+    day = models.IntegerField(default = 1, null= True, blank=True)
+
+
 
     def __str__(self):
         return '%s "PSQI"' % (self.date)

@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from PSQI.models import PSQI
 from datetime import date, timedelta
+from sleep.models import Sleep
 
 
 
@@ -16,8 +17,8 @@ class Exercise(models.Model):
     intensity = models.FloatField(null=True, blank=True)
 
     do_exercise = models.BooleanField(default = True, blank= True, null = True)
-    ared_name = models.CharField(max_length=200)
-    aero_name = models.CharField(max_length=200)
+    ared_name = models.CharField(max_length=200, default='None')
+    aero_name = models.CharField(max_length=200, default='None')
 
     aredTime = models.FloatField(null=True, blank=True)
     aerobicTime = models.FloatField(null=True, blank=True)
@@ -73,12 +74,13 @@ today = date.today()
 def update_excercise(sender, instance, **kwargs):
     if kwargs['created']:
 
-        previous_date = instance.date
+       
 
-        today_excercise = Exercise.objects.filter(date=today)[0]
-
-        
+        # previous_date = instance.date
+        previous_date = instance.date - timedelta(days=1)
+        today_excercise = Exercise.objects.filter(date=instance.date)[0]
         previous_day_excercise = Exercise.objects.filter(date=previous_date)
+
 
         if previous_day_excercise:
             previous_day_excercise = previous_day_excercise[0]
@@ -88,7 +90,8 @@ def update_excercise(sender, instance, **kwargs):
             lastTargetIntensity = previous_day_excercise.targetIntensity
 
             targetIntensity = 8
-            date = 2
+            date = instance.day
+            # date = 2
         # First Day
         else:
             userFeedBackIntensity = 6
@@ -96,7 +99,9 @@ def update_excercise(sender, instance, **kwargs):
             targetIntensity = 8
             date = 1
         
-        today_excercise.update(userFeedBackIntensity,lastTargetIntensity,targetIntensity, date, instance)        
+        today_excercise.update(userFeedBackIntensity,lastTargetIntensity,targetIntensity, date, instance)  
+
+    
 
 
 post_save.connect(update_excercise, sender = PSQI)

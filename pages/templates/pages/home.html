@@ -1,9 +1,297 @@
 {% extends "base.html" %}
 
-{%block content%}
+{% block headline%}
+    Today's Schedule
+{%endblock%}
+
+{% block head%}
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script type="text/javascript">
+    google.charts.load("current", {packages:["timeline"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var container = document.getElementById('example2.1');
+      var chart = new google.visualization.Timeline(container);
+      var dataTable = new google.visualization.DataTable();
+
+      dataTable.addColumn({ type: 'string', id: 'Term' });
+      dataTable.addColumn({ type: 'string', id: 'Name' });
+      dataTable.addColumn({ type: 'date', id: 'Start' });
+      dataTable.addColumn({ type: 'date', id: 'End' });
+
+      var sleep_start_hour = "{{sleep_start_hour}}"
+      
+      var year = {{today_year}}
+      var month = {{today_month}}
+      var date = {{today_date}}
+
+      var year2 = {{tomorrow_year}}
+      var month2 = {{tomorrow_month}}
+      var date2 = {{tomorrow_date}}
+
+      var ssh = {{sleep_start_hour}}
+      var ssm = {{sleep_start_min}}
+      var seh = {{sleep_end_hour}}
+      var sem = {{sleep_end_min}}
+
+      var take_nap = '{{take_nap}}'
+      var nsh = {{nap_start_hour}}
+      var nsm = {{nap_start_min}}
+      var neh = {{nap_end_hour}}
+      var nem = {{nap_end_min}}
+
+      var bsh = {{b_start_hour}}
+      var bsm = {{b_start_min}}
+      var beh = {{b_end_hour}}
+      var bem = {{b_end_min}}
+
+      var lsh = {{l_start_hour}}
+      var lsm = {{l_start_min}}
+      var leh = {{l_end_hour}}
+      var lem = {{l_end_min}}
+
+      var dsh = {{d_start_hour}}
+      var dsm = {{d_start_min}}
+      var deh = {{d_end_hour}}
+      var dem = {{d_end_min}}
+
+      var do_aerobics = '{{do_aerobics}}'
+      var do_resistant = '{{do_resistant}}'
+
+      var aesh = {{aerobics_exercise_start_hour}}
+      var aesm = {{aerobics_exercise_start_min}}
+      var aeeh = {{aerobics_exercise_end_hour}}
+      var aeem = {{aerobics_exercise_end_min}}
+
+      var resh = {{resistant_excercise_start_hour}}
+      var resm = {{resistant_excercise_start_min}}
+      var reeh = {{resistant_excercise_end_hour}}
+      var reem = {{resistant_excercise_end_min}}
+
+      var take_meditation = '{{take_meditation}}'
+      var meditation_s_h = 12
+      var meditation_s_m = 0
+      var meditation_e_h = 15
+      var meditation_e_m = 0
 
 
- 
+      var take_melatonin = '{{take_melatonin}}'
+      var melatonin_s_h = 18
+      var melatonin_s_m = 0
+      var melatonin_e_h = 20
+      var melatonin_e_m = 0
 
+      var take_caffeine = '{{take_caffeine}}'
+      var caffeine_s_h = 9
+      var caffeine_s_m = 0
+      var caffeine_e_h = 12
+      var caffeine_e_m = 0
+
+      var wlsh = ssh-1
+      var wlsm = ssm
+      var wleh = ssh
+      var wlem = ssm
+      
+      var blsh = seh+1
+      var blsm = sem
+      var bleh = wlsh-5
+      var blem = wlem
+
+
+
+
+      dataTable.addRows([
+      [ 'Nutrition', 'BreakFast',           new Date(year,month,date,bsh,bsm,0), new Date(year,month,date,beh,bem,0) ],
+      [ 'Sleep',  'Night',                  new Date(year,month,date,ssh,ssm,0), new Date(year2,month2,date2,seh,sem,0) ],
+      [ 'Nutrition', 'Lunch',               new Date(year,month,date,lsh,lsm,0), new Date(year,month,date,leh,lem,0) ],
+      [ 'Nutrition',   'Dinner',            new Date(year,month,date,dsh,dsm,0), new Date(year,month,date,deh,dem,0) ],
+
+
+      ]);
+
+      if(do_resistant == 'True'){
+        dataTable.addRows([
+          [ 'Exercise', 'Resistant Training',   new Date(year,month,date,resh,resm,0), new Date(year,month,date,reeh,reem,0) ],
+        ]);
+      }
+
+      if(do_aerobics == 'True'){
+        dataTable.addRows([
+          [ 'Exercise',  'Aerobics',            new Date(year,month,date,aesh,aesm,0), new Date(year,month,date,aeeh,aeem,0) ],
+        ]);
+      }
+
+      if(take_nap == 'True'){
+        dataTable.addRows([
+        [ 'Sleep',  'Nap',                    new Date(year,month,date,nsh,nsm,0), new Date(year,month,date,neh,nem,0)],
+        ]);
+      } 
+
+      if(take_meditation == 'True'){
+        dataTable.addRows([
+          [ 'Sleep Helper',   'meditation',               new Date(year,month,date,meditation_s_h,meditation_s_m,0), new Date(year,month,date,meditation_e_h,meditation_e_m,0) ],
+        ]);
+      } 
+      if(take_melatonin == 'True'){
+        dataTable.addRows([
+          [ 'Sleep Helper',   'melatonin',               new Date(year,month,date,melatonin_s_h,melatonin_s_m,0), new Date(year,month,date,melatonin_e_h,melatonin_e_m,0) ],
+        ]);
+      } 
+      if(take_caffeine == 'True'){
+        dataTable.addRows([
+          [ 'Sleep Helper',   'caffeine',               new Date(year,month,date,caffeine_s_h,caffeine_s_m,0), new Date(year,month,date,caffeine_e_h,caffeine_e_m,0) ],
+        ]);
+      } 
+
+      dataTable.addRows([
+      
+      [ 'Sleep Helper',   'Warm Light',     new Date(year,month,date,wlsh,wlsm,0), new Date(year,month,date,wleh,wlem,0) ],
+      [ 'Sleep Helper',   'White Light',     new Date(year,month,date,blsh,blsm,0), new Date(year,month,date,bleh,blem,0) ],
+
+      ]);
+
+
+
+      chart.draw(dataTable);
+    }
+  </script>
+  
+
+{% endblock%}
+
+{% block content%}
+
+
+
+  
+  
+  
+
+  <div id="example2.1" style="height: 250px; " ></div>
+
+
+
+  <h1> Nutrition Guidance </h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Amount/g</th>
+      </tr>
+    </thead>
+    
+
+    <tbody>
+      <tr>
+        <th scope="row">Protein</th>
+        <td>{{ schedule.nutrition.m_protein }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Saturated Fat</th>
+        <td>{{ schedule.nutrition.m_fat_saturated | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Unsaturated Fat</th>
+        <td>{{ schedule.nutrition.m_fat_unsaturated | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Carbohydrates</th>
+        <td>{{ schedule.nutrition.m_carb | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Sugar</th>
+        <td>{{ schedule.nutrition.m_sugar | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Table Salt</th>
+        <td>{{ schedule.nutrition.m_NaCl | floatformat}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Potassium</th>
+        <td>{{schedule.nutrition.m_potassium| floatformat }}</td>
+      </tr>
+
+      
+    </tbody>
+  </table> 
+
+
+
+  <h1> Exercise Guidance </h1>
+
+  {% if do_resistant == 'False' and do_aerobics == 'False' %}
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+      </tr>
+    </thead>
+    
+
+    <tbody>
+      <tr>
+        <th scope="row">Rest Day</th>
+      </tr>
+     
+    </tbody>
+  </table>
+
+  {% else %}
+  
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Exercise</th>
+        <th scope="col">Time/hr</th>
+        <th scope="col">Load factor of max capacity</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+
+      {% if  do_resistant %}
+
+      <tr>
+        <th scope="row"> Resistant Training </th>
+        <td>{{ exercise.ared_name }}</td>
+        <td>{{ exercise.aredTime }}</td>
+        <td>{{ exercise.load |floatformat }}</td>
+      </tr>
+
+      {% endif%}
+
+      {% if do_aerobics %}
+
+      <tr>
+        <th scope="row"> Aerobics </th>
+        <td>{{ exercise.aero_name }}</td>
+        <td>{{ exercise.aerobicTime }}</td>
+        <td>{{ exercise.load|floatformat }}</td>
+      </tr>
+
+      {% endif%}
+     
+    </tbody>
+  </table> 
+
+  {%endif%}
+  <br>
+
+  <h1 style='border-bottom: 1px solid lightgray;'> Sleep Quality Indicater </h1>
+
+
+  <p> PSQI Score: {{yesterday_PSQI_score}} / 21 </p>
+  <p> Sleep Score: {{sleep_score}}%</p>
+
+
+  <br><br>
+
+
+  
 
 {%endblock%}

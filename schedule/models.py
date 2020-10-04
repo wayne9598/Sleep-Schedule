@@ -24,6 +24,7 @@ class Sleep_schedule(models.Model):
     astronaut = models.ForeignKey(Astronaut, on_delete=models.CASCADE, null=True, blank=True, default = 1)
     exercise = models.OneToOneField(Exercise, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField()
+    day = models.IntegerField(default = 1, null= True, blank=True)
 
     
 
@@ -203,11 +204,11 @@ def update_schedule(sender, instance, **kwargs):
         PSQI = instance.PSQI
 
         # Previous date to get sleep data
-        previous_date = date.today() - timedelta(days=1)
+        previous_date = instance.date - timedelta(days=1)
         # Get sleep object
         sleep = Sleep.objects.get(date=previous_date)
         # Get today schedule object
-        today_schedule = Sleep_schedule.objects.filter(date=date.today())[0]
+        today_schedule = Sleep_schedule.objects.filter(date=instance.date)[0]
 
         # Get scores
         sleep_sensed_score = sleep.get_sleep_score()
@@ -236,7 +237,7 @@ def update_schedule(sender, instance, **kwargs):
             elif i == Action.TAKE_NAP:
                 today_schedule.add_nap()
             
-            elif i == Action.Melatonin:
+            elif i == Action.TAKE_MELATONIN:
                 today_schedule.add_melatonin()
 
         today_schedule.update_excercise_in_schedule(instance.do_exercise, instance.aredTime, instance.aerobicTime, instance.load, instance)
