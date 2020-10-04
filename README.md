@@ -10,9 +10,10 @@ Demo video: https://github.com/wayne9598/Sleep-Schedule
 
 Open the website:
 1. Download/clone the code
-2. install django through 'pip install django'
-3. create virtual environment through '
-4. activate virtual env through 'source bin/activate'
-5. runserver through 'python manage.py runserver'
-6. Go to local link provided by terminal
-7. Enjoy!
+2. Install Pythton
+3. Install django through 'pip install django'
+4. Create virtual environment through '
+5. Activate virtual env through 'source bin/activate'
+6. Runserver through 'python manage.py runserver'
+7. Go to local link provided by terminal
+8. Enjoy!
