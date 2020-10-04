@@ -103,11 +103,8 @@
 
 
       dataTable.addRows([
-      [ 'Nutrition', 'BreakFast',           new Date(year,month,date,bsh,bsm,0), new Date(year,month,date,beh,bem,0) ],
       [ 'Sleep',  'Night',                  new Date(year,month,date,ssh,ssm,0), new Date(year2,month2,date2,seh,sem,0) ],
-      [ 'Nutrition', 'Lunch',               new Date(year,month,date,lsh,lsm,0), new Date(year,month,date,leh,lem,0) ],
-      [ 'Nutrition',   'Dinner',            new Date(year,month,date,dsh,dsm,0), new Date(year,month,date,deh,dem,0) ],
-
+      
 
       ]);
 
@@ -122,6 +119,13 @@
           [ 'Exercise',  'Aerobics',            new Date(year,month,date,aesh,aesm,0), new Date(year,month,date,aeeh,aeem,0) ],
         ]);
       }
+
+      dataTable.addRows([
+      [ 'Nutrition', 'BreakFast',           new Date(year,month,date,bsh,bsm,0), new Date(year,month,date,beh,bem,0) ],
+      [ 'Nutrition', 'Lunch',               new Date(year,month,date,lsh,lsm,0), new Date(year,month,date,leh,lem,0) ],
+      [ 'Nutrition',   'Dinner',            new Date(year,month,date,dsh,dsm,0), new Date(year,month,date,deh,dem,0) ],
+
+      ]);
 
       if(take_nap == 'True'){
         dataTable.addRows([
