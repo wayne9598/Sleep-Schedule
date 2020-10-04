@@ -1,11 +1,11 @@
 from django.urls import path, include
 
-from .views import sleep_schedule_view
+from .views import schedule_list_view, dynamic_schedule_lookup_view
 
 app_name = 'schedule'
 urlpatterns = [
-    path('', sleep_schedule_view, name='schedule'),
-    
+    path('/list', schedule_list_view, name='schedule_list'),
+    path('<int:id>', dynamic_schedule_lookup_view, name='schedule_detail'),
 
 ]
 

@@ -43,13 +43,16 @@ class Action(Enum):
     AMAZING = 'No further action required'
 
 
-def recommendation(subjective_score: int, duration: float, rem: float, deep: float, restfulness: float,
-                   resting_heart_rate: float, efficiency: float, latency: float) -> Iterable[Action]:
-    sleep_quality_score = rate_sleep_quality(duration, rem, deep, restfulness, resting_heart_rate, efficiency, latency)
+#def recommendation(subjective_score: int, duration: float, rem: float, deep: float, restfulness: float,
+    #               resting_heart_rate: float, efficiency: float, latency: float) -> Iterable[Action]:
+   # sleep_quality_score = rate_sleep_quality(duration, rem, deep, restfulness, resting_heart_rate, efficiency, latency)
     # if subjective_score <= 5:
     #     "good sleep"
     # elif subjective_score > 7:
     #     "bad sleep"
+
+def recommendation(subjective_score: int, sleep_quality_score: float, duration: float, latency:float) -> Iterable[Action]:
+
     recommend = set()
 
     if duration > hr(9) and subjective_score >= 7:
