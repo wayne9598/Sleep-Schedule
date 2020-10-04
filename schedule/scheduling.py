@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Set
 from enum import Enum
 import math
@@ -33,13 +33,13 @@ class Event:
 
 @dataclass
 class Sleep(Event):
-    name = 'sleep'
-    rem: float
-    deep: float
-    restfulness: float
-    resting_heart_rate: float
-    efficiency: float
-    latency: float
+    rem: float = None
+    deep: float = None
+    restfulness: float = None
+    resting_heart_rate: float = None
+    efficiency: float = None
+    latency: float = None
+    name: str = 'sleep'
 
     @property
     def duration(self) -> float:
@@ -52,6 +52,8 @@ class Sleep(Event):
 
             :return: sleep quality score
             """
+        if not(all([self.rem, self.deep, self.restfulness, self.resting_heart_rate, self.efficiency, self.latency])):
+            raise Exception("sleep quality unavailable due to missing sleep measures")
         if self.duration > 0:
             duration_quality = 1 + math.log(1 - (abs(self.duration / hr(9) - 1)))
             rem_quality = self.rem * 2 + 0.5 if self.rem > 0.2 else self.rem * 6 - 0.3 if self.rem > 0.15 else \
@@ -78,6 +80,7 @@ class FoodIntake(Event):
 @dataclass
 class Transport(Event):
     planned_duration: float
+    nap_allowed: bool
 
 
 @dataclass
@@ -85,6 +88,11 @@ class AirTransport(Transport):
     prep_time: float
     start_timezone: int
     end_timezone: int
+    nap_allowed = True
+
+    def __post_init__(self):
+        self.start_time = self.start_time.replace(tzinfo=timezone(timedelta(hours=self.start_timezone)))
+        self.end_time = self.end_time.replace(tzinfo=timezone(timedelta(hours=self.start_timezone)))
 
     @property
     def latest_wake_time(self):
@@ -94,6 +102,11 @@ class AirTransport(Transport):
 @dataclass
 class SpaceTransport(AirTransport):
     prep_time = hr(5)
+    nap_allowed = True
+
+
+def time_of_day(date: datetime, hour: int, minute: int) -> datetime:
+    return date.replace(hour=hour, minute=minute)
 
 
 @dataclass
@@ -101,9 +114,65 @@ class Schedule:
     events: Set[Event]
 
     def recommend_sleep(self):
-        # do some calculation here
-        # self.events.add(Sleep(label=Label.RECOMMENDED))
-        pass
+        transports = [e for e in self.events if isinstance(e, AirTransport)]
+        for transport in transports:
+            standard_start_sleep_time = time_of_day(transport.start_time - timedelta(days=1), 23, 0)
+            standard_end_sleep_time = time_of_day(transport.start_time, 7, 0)
+            recommended_start_sleep_time = standard_start_sleep_time
+            recommended_end_sleep_time = standard_end_sleep_time
+            destination_standard_sleep_time = standard_start_sleep_time.replace(
+                tzinfo=timezone(timedelta(hours=transport.end_timezone))).astimezone(
+                timezone(timedelta(hours=transport.start_timezone)))
+            destination_standard_wake_time = standard_end_sleep_time.replace(
+                tzinfo=timezone(timedelta(hours=transport.end_timezone))).astimezone(
+                timezone(timedelta(hours=transport.start_timezone)))
+
+            if transport.start_time - timedelta(minutes=transport.prep_time) > standard_end_sleep_time:
+                self.events.add(
+                    Sleep(label=Label.RECOMMENDED,
+                          start_time=standard_start_sleep_time,
+                          end_time=standard_end_sleep_time))
+
+            if transport.end_time - timedelta(minutes=90) > destination_standard_sleep_time:
+                self.events.add(
+                    Sleep(label=Label.RECOMMENDED,
+                          start_time=destination_standard_sleep_time,
+                          end_time=destination_standard_wake_time))
+
+            if transport.start_time - timedelta(minutes=transport.prep_time) < standard_end_sleep_time:
+                self.events.add(
+                    Sleep(label=Label.RECOMMENDED,
+                          start_time=max(transport.start_time - timedelta(minutes=transport.prep_time + hr(1))
+                                         - timedelta(hours=8),
+                                         time_of_day(standard_start_sleep_time, 21, 0)),
+                          end_time=transport.start_time - timedelta(minutes=transport.prep_time + hr(1))))
+
+            if transport.start_time > time_of_day(transport.start_time, 22, 30) or transport.start_time < time_of_day(transport.start_time, 1, 0):
+                # if spaceship departs after 10:30pm, take a 3-hr nap waking up an hour before the start prepping time
+                # then take a 5-hr nap 5 hours after departure
+                if isinstance(transport, SpaceTransport):
+                    self.events.add(
+                        Sleep(label=Label.RECOMMENDED,
+                              start_time=transport.start_time - timedelta(minutes=transport.prep_time + hr(4)),
+                              end_time=transport.start_time - timedelta(minutes=transport.prep_time + hr(1))))
+                    self.events.add(
+                        Sleep(label=Label.RECOMMENDED,
+                              start_time=transport.start_time + timedelta(minutes=hr(5)),
+                              end_time=transport.start_time + timedelta(minutes=hr(10))))
+
+                # if flight departs after 10:30pm or before 1am, sleep starts 30mins after departure
+                if isinstance(transport, AirTransport) and not isinstance(transport, SpaceTransport):
+                    self.events.add(
+                        Sleep(label=Label.RECOMMENDED,
+                              start_time=transport.start_time + timedelta(minutes=30),
+                              end_time=min(transport.end_time - timedelta(minutes=30), standard_end_sleep_time)))
+
+            # if arrive before local time 7am, sleep till 7am
+            if transport.end_time + timedelta(minutes=90) < destination_standard_wake_time:
+                self.events.add(
+                    Sleep(label=Label.RECOMMENDED,
+                          start_time=transport.end_time + timedelta(minutes=90),
+                          end_time=destination_standard_wake_time))
 
 
 @dataclass
