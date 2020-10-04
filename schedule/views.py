@@ -143,6 +143,9 @@ def dynamic_schedule_lookup_view(request, id):
     yesterday_PSQI_score = sleep_schedule.PSQI_score
 
 
+    sleep_duration = sleep_schedule.get_sleep_duration
+
+
     # games = Game.objects.filter(end_time__gte = current_time).order_by('start_time') #list of object
     
     context = {
@@ -198,6 +201,8 @@ def dynamic_schedule_lookup_view(request, id):
        
         'yesterday_PSQI_score': yesterday_PSQI_score,
         'sleep_score': sleep_score,
+
+        'sleep_duration':sleep_duration,
         
 
 

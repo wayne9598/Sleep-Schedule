@@ -6,6 +6,8 @@ import datetime
 from django.urls import reverse
 from sleep.models import Sleep
 from .calculations import recommendation, Action
+from astronauts.models import Astronaut 
+
 
 import math
 import os
@@ -18,10 +20,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sleep_schedule.settings')
 # Create your models here.
 class Sleep_schedule(models.Model):
 
+    astronaut = models.ForeignKey(Astronaut, on_delete=models.CASCADE, null=True, blank=True, default = 1)
     date = models.DateField()
 
-    start_time = models.TimeField(default=datetime.time(23, 00))
-    end_time = models.TimeField(default=datetime.time(8, 00))
+    
+
+    start_time = models.TimeField(blank=True, null=True, default=datetime.time(23, 00))
+    end_time = models.TimeField(blank=True, null=True, default=datetime.time(8, 00))
 
     take_meditation = models.BooleanField(default=False,blank=True, null=True)
     take_melatonin = models.BooleanField(default=False,blank=True, null=True)
@@ -45,7 +50,10 @@ class Sleep_schedule(models.Model):
     dinner_end_time = models.TimeField(default=datetime.time(19, 00))
 
     sensed_score = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
-    PSQI_score = models.IntegerField(max_length=200, blank=True, null=True)
+    PSQI_score = models.IntegerField(blank=True, null=True)
+
+    light_work_hrs = models.DecimalField(max_digits=3, decimal_places=2, default=4)
+    heavy_work_hrs = models.DecimalField(max_digits=3, decimal_places=2, default=4)
 
 
 
@@ -95,15 +103,56 @@ class Sleep_schedule(models.Model):
         self.take_caffeine = True
         self.save()
 
+    def get_exercise_hour(self):
+
+        aerobics_duration = get_time_in_hr(self.aerobics_exercise_start, self.aerobics_exercise_end)
+        resistant_duration = get_time_in_hr(self.resistant_excercise_start, self.resistant_excercise_end)
+        
+        return aerobics_duration + resistant_duration
+
+    def get_meal_hour(self):
+
+        b_duration = get_time_in_hr(self.breakfast_start_time, self.breakfast_end_time)
+        l_duration = get_time_in_hr(self.lunch_start_time, self.lunch_end_time)
+        d_duration = get_time_in_hr(self.dinner_start_time, self.dinner_end_time)
+
+        return b_duration + l_duration + d_duration
+    
+
+    def get_sleep_duration(self):
+        
+        sleep_duration = get_time_in_hr(self.start_time, self.end_time)
+        nap_duration = 0
+        if self.take_nap:
+            nap_duration = get_time_in_hr(self.nap_start, self.nap_end)
+        
+
+        return nap_duration+sleep_duration
+
+
+def get_time_in_hr(start, end):
+
+    start = str(start)
+    print('start', start)
+    end = str(end)
+    time1 = datetime.datetime.strptime(start,'%H:%M:%S')
+    time2 = datetime.datetime.strptime(end,'%H:%M:%S')
+    difference = time2-time1
+    datetime.timedelta(0, 3600)
+    second = difference.seconds
+    hours = second/3600
+    return hours
+
+
+
 
 
     
 
-date = date.today() + timedelta(days=7)
-start_time = timezone.now()
-end_time = timezone.now()
-nap_start = timezone.now()
-nap_end = timezone.now()
+
+
+tomorrow_date = date.today() + timedelta(days=1)
+
 
 
 # Once submit PSQI, automatically create +7 day schedule with default value
@@ -111,12 +160,8 @@ def create_schedule(sender, **kwargs):
     if kwargs['created']:
 
         sleep_schedule = Sleep_schedule.objects.create(
-            date = date,
-            start_time = start_time,
-            end_time = end_time,
-            nap_start = nap_start,
-            nap_end = nap_end,
-            
+            date = tomorrow_date,
+    
         )
 
 
@@ -164,7 +209,7 @@ def update_schedule(sender, instance, **kwargs):
         
 
 
-#post_save.connect(create_schedule, sender = PSQI)
+post_save.connect(create_schedule, sender = PSQI)
 post_save.connect(update_schedule, sender = PSQI)
 
 

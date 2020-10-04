@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('pages.urls')),
     path('schedule', include('schedule.urls')),
+    path('profile', include('astronauts.urls')),
+
     # path('PSQI', include('PSQI.urls')),
 
     path('create', PSQI_create_view)

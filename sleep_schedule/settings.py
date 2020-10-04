@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'pages',
     'schedule',
     'PSQI',
+    'astronauts',
 
     'crispy_forms',
 ]
