@@ -47,27 +47,21 @@ class Sleep(Event):
 
     def quality(self) -> float:
         """
-            calculate sleep quality score based on duration, percentage of REM, percentage of deep, restfulness, resting heart
-            rate, sleep efficiency and sleep latency.
+            calculate sleep quality score based on duration, percentage of REM, percentage of deep, restfulness,
+            resting heart rate, sleep efficiency and sleep latency.
 
-            :param duration: sleep duration in minutes
-            :param rem: percentage of sleep being rem sleep
-            :param deep: percentage of sleep being deep sleep
-            :param restfulness: percentage
-            :param resting_heart_rate: percentage
-            :param efficiency: percentage
-            :param latency: minutes
             :return: sleep quality score
             """
         if self.duration > 0:
             duration_quality = 1 + math.log(1 - (abs(self.duration / hr(9) - 1)))
-            rem_quality = self.rem * 2 + 0.5 if self.rem > 0.2 else self.rem * 6 - 0.3 if self.rem > 0.15 else self.rem * 12 - 1.2 if self.rem > 1 else self.rem / 0.1 - 1
+            rem_quality = self.rem * 2 + 0.5 if self.rem > 0.2 else self.rem * 6 - 0.3 if self.rem > 0.15 else \
+                self.rem * 12 - 1.2 if self.rem > 1 else self.rem / 0.1 - 1
             deep_quality = -2 * (1 + math.exp(10 * self.deep - 0.375)) ** -1 + 1
             latency_quality = 1 + abs(self.latency - 15) / 15
             return (duration_quality + rem_quality + deep_quality + self.restfulness + self.resting_heart_rate +
-                    self.efficiency + latency_quality) \
-                   / sum([1 for i in [self.duration, self.rem, self.deep, self.restfulness, self.resting_heart_rate,
-                                      self.efficiency, self.latency] if i])
+                    self.efficiency + latency_quality) / sum([1 for i in [self.duration, self.rem, self.deep,
+                                                                          self.restfulness, self.resting_heart_rate,
+                                                                          self.efficiency, self.latency] if i])
         return 0
 
 
