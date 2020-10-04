@@ -1,6 +1,6 @@
-# Sleep-Schedule by Legacy (London)
+# Sleep-Schedule by Tean 'Legacy' (London)
 
--	This is a NASA SpaceApp challenge for developing a schedule to astronaut that provide sleep, exercise and nutrition guidance. 
+This is a NASA SpaceApp challenge for developing a schedule to astronaut that provide sleep, exercise and nutrition guidance. 
 
 Report in pdf: https://github.com/wayne9598/Sleep-Schedule/blob/master/Report.pdf
 Report in ppt: https://github.com/wayne9598/Sleep-Schedule/blob/master/Report.pptx
