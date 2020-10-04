@@ -6,7 +6,7 @@ Report in pdf: https://github.com/wayne9598/Sleep-Schedule/blob/master/Report.pd
 
 Report in ppt: https://github.com/wayne9598/Sleep-Schedule/blob/master/Report.pptx
 
-Demo video: https://github.com/wayne9598/Sleep-Schedule
+Demo video: $ git merge origin/master
 
 Open the website:
 1. Download/clone the code
